@@ -1,0 +1,52 @@
+#!/bin/bash
+# (C) 28th Oct 2016 - 4th April 2020 Joel Schneider
+# License: MIT
+# Update list of updates available for Slackware
+# Requires: slackpkg, sbopkg, at
+# Rechecks updates daily
+#
+# Usage: spkg_update
+# (only needs to be done once
+
+slackpkg_update() {
+	slackpkg update 2>&1 > /dev/null & slackpkgPID=$!
+}
+
+sbopkg_update() {
+	sbopkg -r 2>&1 > /dev/null & sbopkgPID=$!
+}
+
+sqg_update() {
+	tail --pid=$1 -f /dev/null 2>&1 > /dev/null
+	sqg -a 2>&1 > /dev/null
+}
+
+stop_updates() {
+	# If updates take too long, stop them.
+	# This might be caused by the network 
+	# connection being down. Doing this 
+	# ensures slackpkg and sbopkg can be
+	# run again.
+	sleep 900
+	kill $1 # slackpkgPID
+	kill $2 # sbopkgPID
+	sleep 1
+	kill -9 $1 #slackpkgPID
+	kill -9 $2 #sbopkgPID
+}
+
+run_tomorrow() {
+	at -f /usr/sbin/spkg_update now + 24 hours 2>&1 > /dev/null
+}
+
+slackpkg_update 2>&1 > /dev/null & slackpkgPID=$!
+sbopkg_update 2>&1 > /dev/null & sbopkgPID=$!
+sqg_update $sbopkgPID 2>&1 > /dev/null & sqgPID=$1
+
+# Set it to run again in another 24 hours
+run_tomorrow 2>&1 > /dev/null
+
+stop_updates $slackpkgPID $sbopkgPID 2>&1 > /dev/null
+
+# Wait for sqg to finish.
+tail --pid=$sqgPID -f /dev/null 2>&1 > /dev/null
