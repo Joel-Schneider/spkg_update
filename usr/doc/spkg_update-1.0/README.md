@@ -5,7 +5,7 @@ Update list of updates available for Slackware. Also updates sbopkg queue files.
 
 License
 -------
-MIT
+ISC
 
 Requires
 --------
