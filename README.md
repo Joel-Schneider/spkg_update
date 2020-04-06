@@ -31,9 +31,7 @@ Compiling from source
 ---------------------
 Just use the package!
 
-Download the source as an archive, and download the SlackBuild file to the same folder, change to the folder with the compressed source file, then run (as root):
-<pre>$ ./spkg_update.SlackBuild</pre>
-You can then install it as above.
+Follow the instructions for the SlackBuild package at https://www.github.com/Joel-Schneider/spkg_update.SlackBuild
 
 Code
 ---- 
